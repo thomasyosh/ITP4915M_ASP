@@ -1,7 +1,7 @@
 namespace ITP4915M.AppLogic.Controllers; 
 using System;
-using TheBetterLimited_Server.Data;
-using TheBetterLimited_Server.Data.Entity;
+using ITP4915M.Data;
+using ITP4915M.Data.Entity;
 using QRCoder;
 
 public class PaymentController

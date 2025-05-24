@@ -9435,7 +9435,7 @@ jQuery.extend( {
 			jqXHR = {
 				readyState: 0,
 
-				// Builds headers hashtable if needed
+				// Builds headers Dictionary<object, object> if needed
 				getResponseHeader: function( key ) {
 					var match;
 					if ( completed ) {

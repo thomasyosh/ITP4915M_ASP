@@ -75,7 +75,7 @@ namespace ITP4915M.AppLogic.Controllers
            public string orderId { get; set; }
 
            public Customer customer { get; set; }
-           public Hashtable? team { get; set; }
+           public Dictionary<object, object>? team { get; set; }
            public string salesOrderStatus  { get; set; }
         }
 
@@ -146,7 +146,7 @@ namespace ITP4915M.AppLogic.Controllers
                     SalesOrderStatus status = items[0].SalesOrderItem.SalesOrder.Status;
 
                     var orderId = items[0].SalesOrderItem._salesOrderId;
-                    Hashtable? team = null;
+                    Dictionary<object, object>? team = null;
                     if (item.Team is not null)
                     {
                         team = item.Team.MapToDto();

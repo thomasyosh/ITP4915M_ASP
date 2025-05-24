@@ -1,6 +1,7 @@
 using ITP4915M.Data;
 using ITP4915M.Data.Dto;
-
+using System.Text;
+using ITP4915M.Helpers.LogHelper
 
 namespace ITP4915M.AppLogic.Controllers;
 

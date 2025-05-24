@@ -4,6 +4,8 @@ using ITP4915M.Data.Entity;
 using ITP4915M.AppLogic.Models;
 using ITP4915M.Helpers.LogHelper;
 using ITP4915M.Data.Dto;
+using System.Net;
+
 namespace ITP4915M.AppLogic.Controllers;
 
 public class LoginController
@@ -128,7 +130,7 @@ public class LoginController
         // prepare email content
         List<UpdateObjectModel> content = new List<UpdateObjectModel>(5);
         content.Add(new UpdateObjectModel() { Attribute = "redirect_url", Value = "http://localhost:5233/api/login/resetpwd/page" });
-        content.Add(new UpdateObjectModel() { Attribute = "expire_time", Value = Int32.Parse(_Secret["reset_password_expire_time"]) });
+        content.Add(new UpdateObjectModel() { Attribute = "expire_time", Value = Int32.Parse(Environment.GetEnvironmentVariable("reset_password_expire_time")) });
         content.Add(new UpdateObjectModel() { Attribute = "lang", Value = lang });
         content.Add(new UpdateObjectModel() { Attribute = "name", Value = potentialUser.UserName });
         content.Add(new UpdateObjectModel() { Attribute = "token", Value = token.GetFileName() });

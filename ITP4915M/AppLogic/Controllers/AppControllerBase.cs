@@ -1,4 +1,6 @@
 using ITP4915M.AppLogic.Models;
+using System.Collections.Generic;
+using ITP4915M.Data;
 
 namespace ITP4915M.AppLogic.Controllers
 {
@@ -27,7 +29,7 @@ namespace ITP4915M.AppLogic.Controllers
         {
             return DtoType.GetPropertiesToString();
         }
-        public virtual async Task<List<Hashtable>> GetAll(string lang = "en")
+        public virtual async Task<List<Dictionary<object, object>>> GetAll(string lang = "en")
         {
 
             var list = await repository.GetAllAsync();
@@ -57,7 +59,7 @@ namespace ITP4915M.AppLogic.Controllers
             return await Helpers.File.PDFFactory.Instance.Create(list);
         }
         
-        public virtual async Task<List<Hashtable>> GetWithLimit(int limit, uint offset = 0 ,string lang = "en")
+        public virtual async Task<List<Dictionary<object, object>>> GetWithLimit(int limit, uint offset = 0 ,string lang = "en")
         {
             var list = (await repository.GetAllAsync()).AsReadOnly().ToList();
             limit = limit > list.Count ? list.Count : limit;
@@ -70,13 +72,13 @@ namespace ITP4915M.AppLogic.Controllers
             return list.MapToDto();
         }
 
-        public virtual async Task<Hashtable> GetById(string id,string lang = "en")
+        public virtual async Task<Dictionary<object, object>> GetById(string id,string lang = "en")
         {
             var goods = await repository.GetByIdAsync(id);
             return Helpers.Localizer.TryLocalize<T>(lang , goods).MapToDto();
         }
 
-        public virtual async Task<List<Hashtable>> GetByQueryString(string queryString,string lang = "en")
+        public virtual async Task<List<Dictionary<object, object>>> GetByQueryString(string queryString,string lang = "en")
         {
             var goods = await repository.GetBySQLAsync(
                 Helpers.Sql.QueryStringBuilder.GetSqlStatement<T>(queryString)

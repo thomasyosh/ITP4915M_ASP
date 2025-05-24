@@ -1,15 +1,10 @@
-using TheBetterLimited_Server.Data.Dto;
+using ITP4915M.Data.Dto;
 
-namespace TheBetterLimited_Server.AppLogic.Models
+namespace ITP4915M.AppLogic.Models
 {
     public class LoginModel
     {
-        [Required]
-        [MaxLength(10)]
         public string UserName { get; set; }
-
-        [Required]
-        [MaxLength(100)]
         public string Password { get; set; }
     }
 
@@ -45,9 +40,7 @@ namespace TheBetterLimited_Server.AppLogic.Models
     {
         public string menu_name { get; set; }
         public bool? read { get; set; }
-
         public bool? write { get; set; }
-
         public bool? delete { get; set; }
     }
 }

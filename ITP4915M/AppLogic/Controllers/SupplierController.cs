@@ -45,7 +45,7 @@ namespace ITP4915M.AppLogic.Controllers
                 throw new BadArgException("The supplier not found.");
             }
 
-            TheBetterLimited_Server.Helpers.Entity.EntityUpdater.Update<Supplier>(ref potentialSupplier , content);
+            ITP4915M.Helpers.Entity.EntityUpdater.Update<Supplier>(ref potentialSupplier , content);
             await supplierRepository.UpdateAsync(potentialSupplier);
             await db.SaveChangesAsync();
         }

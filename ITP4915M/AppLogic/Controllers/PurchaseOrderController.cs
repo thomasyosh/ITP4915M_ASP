@@ -1,4 +1,5 @@
 using ITP4915M.Data.Dto;
+using ITP4915M.Helpers.Extension;
 
 namespace ITP4915M.AppLogic.Controllers
 {
@@ -122,7 +123,7 @@ namespace ITP4915M.AppLogic.Controllers
 
         public void CreateEntry(PurchaseOrderInDto dto, string username)
         {
-            Helpers.Entity.EntityValidator.Validate<PurchaseOrderInDto>(dto);
+            // Helpers.Entity.EntityValidator.Validate<PurchaseOrderInDto>(dto);
             _message.BoardcastMessageToPosition(username , "802"
                     ,"New Purchase request pulled!"
                     ,"Please check the request.");

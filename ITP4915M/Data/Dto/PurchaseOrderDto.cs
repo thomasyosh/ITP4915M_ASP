@@ -10,7 +10,7 @@ namespace ITP4915M.Data.Dto
 
     public class PurchaseOrderItemOutDto
     {
-        public Hashtable Goods { get; set; }
+        public Dictionary<object, object> Goods { get; set; }
         public int Quantity { get; set; }
         public bool isNewItem { get; set; }
         public uint ReceivedQuantity { get; set; }

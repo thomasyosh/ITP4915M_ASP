@@ -1,6 +1,6 @@
-namespace TheBetterLimited_Server.AppLogic.Models
+namespace ITP4915M.AppLogic.Models
 {
-    using TheBetterLimited_Server.Data.Dto;
+    using ITP4915M.Data.Dto;
 
     public class MessageModel
     {

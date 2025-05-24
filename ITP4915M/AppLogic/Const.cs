@@ -1,4 +1,4 @@
-namespace TheBetterLimited_Server.AppLogic
+namespace ITP4915M.AppLogic
 {
     public static class Constraint
     {

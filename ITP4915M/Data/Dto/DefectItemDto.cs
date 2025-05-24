@@ -23,7 +23,7 @@ namespace ITP4915M.Data.Dto
         public string GoodsName { get; set; }
         public string CollectAddress { get; set; }
         public string? StoreName { get; set; }
-        public Hashtable Supplier { get; set; }
+        public Dictionary<object, object> Supplier { get; set; }
         public DateTime CreateAt { get; set; }
         public DateTime OperatedAt { get; set; }
         public int Qty { get; set; }

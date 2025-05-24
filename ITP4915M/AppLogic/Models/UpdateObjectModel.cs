@@ -1,4 +1,4 @@
-namespace TheBetterLimited_Server.AppLogic.Models
+namespace ITP4915M.AppLogic.Models
 {
 
     public class UpdateObjectModel

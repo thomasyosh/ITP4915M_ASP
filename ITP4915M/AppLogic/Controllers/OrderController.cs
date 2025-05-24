@@ -1,14 +1,20 @@
 using ITP4915M.Data.Dto;
 using ITP4915M.Data.Entity;
+using ITP4915M.Data;
+using ITP4915M.AppLogic.Exceptions;
+using ITP4915M.Helpers.LogHelper;
+using ITP4915M.Helpers.Extension;
+using Newtonsoft.Json.Linq;
+using System.Net;
 
-namespace TheBetterLimited_Server.AppLogic.Controllers
+namespace ITP4915M.AppLogic.Controllers
 {
-    public class OrderController 
+    public class OrderController
     {
         private readonly Data.Repositories.Repository<SalesOrderItem> _SalesOrderItemTable;
         private readonly Data.Repositories.Repository<SalesOrder> repository;
 
-        private readonly Data.Repositories.Repository<Appointment> _AppointmentTable; 
+        private readonly Data.Repositories.Repository<Appointment> _AppointmentTable;
         private readonly Data.Repositories.Repository<BookingOrder> _BookingOrderTable;
         private readonly Data.Repositories.Repository<Supplier_Goods_Stock> _Supplier_Goods_StockTable;
         private readonly Data.Repositories.Repository<Staff> _StaffTable;
@@ -23,7 +29,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
         private readonly Data.Repositories.UserInfoRepository userInfo;
         private readonly Data.DataContext db;
 
-        public OrderController(Data.DataContext db) 
+        public OrderController(Data.DataContext db)
         {
             repository = new Data.Repositories.Repository<SalesOrder>(db);
             _SalesOrderItemTable = new Data.Repositories.Repository<SalesOrderItem>(db);
@@ -46,41 +52,41 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
 
 
 
-        public static void UpdateOrderStatus(SalesOrderItem_Appointment item , Data.Repositories.Repository<SalesOrder> _SalesOrderTable)
+        public static void UpdateOrderStatus(SalesOrderItem_Appointment item, Data.Repositories.Repository<SalesOrder> _SalesOrderTable)
         {
-                if (item.Appointment is null || item.SalesOrderItem.BookingOrder is null)
-                {
-                    return;
-                }
-                if (
-                    item.Appointment.Session.StartTime.Hour >= DateTime.Now.Hour &&
-                    item.SalesOrderItem.SalesOrder.Status == SalesOrderStatus.PendingDelivery
-                )
-                {
-                    item.SalesOrderItem.SalesOrder.Status = SalesOrderStatus.PendingInstall;
-                    _SalesOrderTable.Update(item.SalesOrderItem.SalesOrder);
-                }
-                else if (
-                    item.Appointment.Session.Date == DateTime.Now.Date && 
-                    item.SalesOrderItem.SalesOrder.Status == SalesOrderStatus.Placed
-                )
-                {
-                    item.SalesOrderItem.SalesOrder.Status = SalesOrderStatus.PendingDelivery;
-                    _SalesOrderTable.Update(item.SalesOrderItem.SalesOrder);
-                }
-                else if ( 
-                    item.Appointment.Session.EndTime.Hour <= DateTime.Now.Hour &&
-                    (item.SalesOrderItem.SalesOrder.Status == SalesOrderStatus.PendingDelivery || item.SalesOrderItem.SalesOrder.Status == SalesOrderStatus.PendingInstall)
-                )
-                {
-                    item.SalesOrderItem.SalesOrder.Status = SalesOrderStatus.Completed;
-                    _SalesOrderTable.Update(item.SalesOrderItem.SalesOrder);
-                }
+            if (item.Appointment is null || item.SalesOrderItem.BookingOrder is null)
+            {
+                return;
+            }
+            if (
+                item.Appointment.Session.StartTime.Hour >= DateTime.Now.Hour &&
+                item.SalesOrderItem.SalesOrder.Status == SalesOrderStatus.PendingDelivery
+            )
+            {
+                item.SalesOrderItem.SalesOrder.Status = SalesOrderStatus.PendingInstall;
+                _SalesOrderTable.Update(item.SalesOrderItem.SalesOrder);
+            }
+            else if (
+                item.Appointment.Session.Date == DateTime.Now.Date &&
+                item.SalesOrderItem.SalesOrder.Status == SalesOrderStatus.Placed
+            )
+            {
+                item.SalesOrderItem.SalesOrder.Status = SalesOrderStatus.PendingDelivery;
+                _SalesOrderTable.Update(item.SalesOrderItem.SalesOrder);
+            }
+            else if (
+                item.Appointment.Session.EndTime.Hour <= DateTime.Now.Hour &&
+                (item.SalesOrderItem.SalesOrder.Status == SalesOrderStatus.PendingDelivery || item.SalesOrderItem.SalesOrder.Status == SalesOrderStatus.PendingInstall)
+            )
+            {
+                item.SalesOrderItem.SalesOrder.Status = SalesOrderStatus.Completed;
+                _SalesOrderTable.Update(item.SalesOrderItem.SalesOrder);
+            }
         }
 
 
 
-        public async Task<List<OrderOutDto>> ToDto(List<SalesOrder> salesOrders ,  string lang = "en")
+        public async Task<List<OrderOutDto>> ToDto(List<SalesOrder> salesOrders, string lang = "en")
         {
             if (salesOrders.Count == 0)
             {
@@ -113,13 +119,13 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                 int TotalQty = 0;
                 int NormalQty = 0; // the item which are not defect 
                 // convert the sales order item to dto
-                foreach(var salesOrderItem in salesOrderItemList)
+                foreach (var salesOrderItem in salesOrderItemList)
                 {
                     TotalQty += salesOrderItem.Quantity;
                     NormalQty += salesOrderItem.Quantity;
                     if (salesOrderItem.SaleOrderItem_Appointment is not null && salesOrderItem.SaleOrderItem_Appointment.Count() > 0)
                     {
-                        UpdateOrderStatus(salesOrderItem.SaleOrderItem_Appointment[0] , repository);
+                        UpdateOrderStatus(salesOrderItem.SaleOrderItem_Appointment[0], repository);
                     }
 
                     SalesOrderItemOutDto salesOrderItemDto = salesOrderItem.TryCopy<SalesOrderItemOutDto>();
@@ -132,7 +138,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                     ));
                     ConsoleLogger.Debug("SELECT * FROM DefectItemRecord WHERE _salesOrderId = \"" + salesOrders[i].ID + "\" AND _supplierGoodsStockId = \"" + salesOrderItem.SupplierGoodsStock.Id + "\"");
                     List<DefectItemRecordOutDto> defectItems = new List<DefectItemRecordOutDto>();
-                    foreach(var record in potentientDefects)
+                    foreach (var record in potentientDefects)
                     {
                         NormalQty -= record.Quantity;
                         defectItems.Add(
@@ -155,7 +161,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                 var transactionRecords = (await _TransactionTable.GetBySQLAsync(
                     "SELECT * FROM Transaction WHERE _salesOrderId = " + salesOrders[i].ID
                 ));
-                foreach(var record in transactionRecords)
+                foreach (var record in transactionRecords)
                 {
                     paid += record.Amount;
                 }
@@ -163,10 +169,10 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                 decimal total = 0;
                 // get the price from the supplier goods stock record
                 // get the qty from the sales order item record
-                
-                foreach(var salesOrderItem in salesOrderItemList)
+
+                foreach (var salesOrderItem in salesOrderItemList)
                 {
-                    total += (decimal) (salesOrderItem.Price * salesOrderItem.Quantity);
+                    total += (decimal)(salesOrderItem.Price * salesOrderItem.Quantity);
 
                     var appointments = salesOrderItem.SaleOrderItem_Appointment;
                     // if ( appointments is null || appointments.Count == 0)
@@ -179,15 +185,16 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                     }
                     else if (appointments is not null || appointments?.Count != 0) // appointment order
                     {
-                        try 
+                        try
                         {
                             customer = _CustomerTable.GetById(appointments[0].Appointment._customerId); // we assume there is only one customer per appointment and both appointment (delivery and installation) have the same customer
-                        }catch(Exception e)
+                        }
+                        catch (Exception e)
                         {
                             Console.WriteLine(e.Message);
                             continue; // idk why this happens
                         }
-                        foreach(var appointmentItem in appointments)
+                        foreach (var appointmentItem in appointments)
                         {
                             var session = await _SessionTable.GetByIdAsync(appointmentItem.Appointment._sessionId);
 
@@ -239,7 +246,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                             }
                         }
                     }
-                    else 
+                    else
                     {
                         customer = null;
                         continue;
@@ -258,7 +265,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                         total = total,
                         paid = paid,
                         Id = salesOrders[i].ID,
-                        Delivery= deliveryAppointment,
+                        Delivery = deliveryAppointment,
                         Installation = installatAppointment,
                         Customer = customer
                     }
@@ -286,38 +293,38 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
         {
             var salesOrder = (await repository.GetByIdAsync(id));
             var order = new List<SalesOrder>(1) { salesOrder };
-            return (await ToDto( order , lang))[0];
+            return (await ToDto(order, lang))[0];
         }
 
-        public virtual async Task<List<OrderOutDto>> GetWithLimit(int limit, uint offset = 0 ,string lang = "en")
+        public virtual async Task<List<OrderOutDto>> GetWithLimit(int limit, uint offset = 0, string lang = "en")
         {
             var list = (await repository.GetAllAsync()).AsReadOnly().ToList();
             limit = limit > list.Count ? list.Count : limit;
-            offset = offset > list.Count ? (uint) list.Count : offset;
+            offset = offset > list.Count ? (uint)list.Count : offset;
             list = list.GetRange((int)offset, limit);
             return await ToDto(list, lang);
         }
 
-        public async Task<List<OrderOutDto>> GetOrderByMonth(int month, string lang = "en")        
+        public async Task<List<OrderOutDto>> GetOrderByMonth(int month, string lang = "en")
         {
             // SELECT * FROM `SalesOrder` WHERE `createdAt` LIKE "%-06-%"
             var list = (await repository.GetBySQLAsync($"SELECT * FROM `SalesOrder` WHERE `createdAt` LIKE \"%-%{month}-%\" ")).AsReadOnly().ToList();
-            return await ToDto(list,lang);
+            return await ToDto(list, lang);
         }
 
 
-        public async Task<Hashtable> GetTodayOrder(string username , string lang = "en")
+        public async Task<Dictionary<object, object>> GetTodayOrder(string username, string lang = "en")
         {
             var staff = userInfo.GetStaffFromUserName(username);
             // SELECT * FROM `SalesOrder` WHERE `createdAt` LIKE "%-06-%"
             var list = (await repository.GetBySQLAsync($"SELECT * FROM `SalesOrder` WHERE `createdAt` LIKE \"{DateTime.Now.Year}-%{DateTime.Now.Month}-%{DateTime.Now.Day}%\" AND `_creatorId` = \"{staff.Id}\" ")).AsReadOnly().ToList();
-            return new Hashtable
+            return new Dictionary<object, object>
             {
-                ["Orders"] = await ToDto(list,lang),
-                ["StaffInfo"] = new { Name = staff.FirstName + " " + staff.LastName , Id = staff.Id  , StoreId = staff._storeId , StoreName = staff.store.Location.Name }
+                ["Orders"] = await ToDto(list, lang),
+                ["StaffInfo"] = new { Name = staff.FirstName + " " + staff.LastName, Id = staff.Id, StoreId = staff._storeId, StoreName = staff.store.Location.Name }
             };
         }
-        public async Task<string> CreateSalesOrder(string Username , OrderInDto order)
+        public async Task<string> CreateSalesOrder(string Username, OrderInDto order)
         {
 
             // first create the sales order
@@ -329,7 +336,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                 Helpers.Sql.QueryStringBuilder.GetSqlStatement<Account>($"UserName:{Username}")
             )).FirstOrDefault();
 
-            if(account == null)
+            if (account == null)
             {
                 throw new Exception("Account not found");
             }
@@ -346,13 +353,14 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                 _storeId = storeId,
                 createdAt = DateTime.Now,
                 updatedAt = DateTime.Now,
-                Status =  SalesOrderStatus.Placed
+                Status = SalesOrderStatus.Placed
             };
 
-            try 
+            try
             {
                 repository.Add(newOrder);
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 throw e;
                 // sales order should be created successfully first.
@@ -365,14 +373,14 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
             {
 
                 SalesOrderItem i = new SalesOrderItem()
-                    {
-                        Id = Helpers.Sql.PrimaryKeyGenerator.Get<SalesOrderItem>(db),
-                        _salesOrderId = newOrder.ID,
-                        _supplierGoodsStockId = item.SupplierGoodsStockId,
-                        Quantity = item.Quantity,
-                        Price = item.Price
-                    };
-                salesOrderItems.Add(i);              
+                {
+                    Id = Helpers.Sql.PrimaryKeyGenerator.Get<SalesOrderItem>(db),
+                    _salesOrderId = newOrder.ID,
+                    _supplierGoodsStockId = item.SupplierGoodsStockId,
+                    Quantity = item.Quantity,
+                    Price = item.Price
+                };
+                salesOrderItems.Add(i);
                 _SalesOrderItemTable.Add(i);
 
                 Supplier_Goods_Stock sgs = (await _Supplier_Goods_StockTable.GetBySQLAsync(
@@ -402,7 +410,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                     {
                         receivers.Add(s.acc.UserName);
                     }
-                    _MessageController.SendMessage("system" ,
+                    _MessageController.SendMessage("system",
                         new SendMessageDto
                         {
                             Title = "Low Stock Warning",
@@ -410,35 +418,35 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                             content = $"The quantity of {sgs._supplierGoodsId} is less than the minimum limit. Please check the stock."
                         }
                     );
-                    
+
                 }
                 _Supplier_Goods_StockTable.Update(sgs);
             }
-            
+
             // this is a normal booking, which mean no booking or appointment is needed.
             // and the customer should take the goods at the store
             if (order.Customer is null) // this is a normal order
             {
                 salesOrderItems.ForEach(x => x = null);
-                salesOrderItems= null;
+                salesOrderItems = null;
                 account = null;
                 staff = null;
                 GC.Collect();
                 newOrder.Status = SalesOrderStatus.Completed;
                 repository.Update(newOrder);
-                return newOrder.ID; 
+                return newOrder.ID;
             }
             else // there are some booking, or appointment
             {
-                 _CustomerTable.Add(
-                    new Customer
-                    {
-                        ID = Helpers.Sql.PrimaryKeyGenerator.Get<Customer>(db),
-                        Name = order.Customer.Name,
-                        Phone = order.Customer.Phone,
-                        Address = order.Customer.Address
+                _CustomerTable.Add(
+                   new Customer
+                   {
+                       ID = Helpers.Sql.PrimaryKeyGenerator.Get<Customer>(db),
+                       Name = order.Customer.Name,
+                       Phone = order.Customer.Phone,
+                       Address = order.Customer.Address
 
-                    });
+                   });
             }
 
             // create appointments
@@ -450,7 +458,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
 
             bool isBooked = false;
             bool isAppointment = false;
-    
+
             // determine is this order needed to be booked or needed to be appointed
             if (order.SalesOrderItems[0].NeedBooking)
             {
@@ -489,8 +497,8 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
             {
 
                 repository.Update(newOrder);
-                
-                if(order.Appointments.Count == 1)
+
+                if (order.Appointments.Count == 1)
                 {
                     // delivery appointment
                     appointments[0] = new Appointment
@@ -500,11 +508,12 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                         _departmentId = order.Appointments[0].DepartmentId, // hard code
                         _customerId = _CustomerTable.GetAll().Last().ID
                     };
-                    try 
+                    try
                     {
                         _AppointmentTable.Add(appointments[0]);
 
-                    }catch(Exception e)
+                    }
+                    catch (Exception e)
                     {
                         CleanOrder(newOrder.ID);
                         throw new BadArgException("Invalid Appointment");
@@ -513,7 +522,8 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                     foreach (var salesOrderItem in SalesOrderItemsList)
                     {
                         _SalesOrderItem_AppointmentTable.Add(
-                            new SalesOrderItem_Appointment{
+                            new SalesOrderItem_Appointment
+                            {
                                 _salesOrderItemId = salesOrderItem.Id,
                                 _appointmentId = appointments[0].ID
                             }
@@ -555,7 +565,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                     Session s1 = _SessionTable.GetBySQL(
                         Helpers.Sql.QueryStringBuilder.GetSqlStatement<Session>($"Id:{order.Appointments[1].SessionId}")
                     ).FirstOrDefault();
-                     if (s1.NumOfAppointments - 1 <= 0)
+                    if (s1.NumOfAppointments - 1 <= 0)
                     {
                         CleanOrder(newOrder.ID);
                         throw new BadArgException("Cannot create appointment, the session is full");
@@ -565,28 +575,30 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                     s1 = null;
 
                     List<SalesOrderItem_Appointment> salesOrderItem_Appointments = new List<SalesOrderItem_Appointment>();
-                    for (int i = 0 ; i < SalesOrderItemsList.Count ; i++)
+                    for (int i = 0; i < SalesOrderItemsList.Count; i++)
                     {
                         if (order.SalesOrderItems[i].NeedInstall)
                         {
-                            SalesOrderItem_Appointment ientry = new SalesOrderItem_Appointment{
+                            SalesOrderItem_Appointment ientry = new SalesOrderItem_Appointment
+                            {
                                 _salesOrderItemId = SalesOrderItemsList[i].Id,
-                                _appointmentId = appointments[1].ID 
+                                _appointmentId = appointments[1].ID
                             };
                             salesOrderItem_Appointments.Add(ientry);
                             ientry = null;
                         }
-                        
+
                         if (order.SalesOrderItems[i].NeedDelivery)
                         {
-                            SalesOrderItem_Appointment dentry = new SalesOrderItem_Appointment{
-                                    _salesOrderItemId = SalesOrderItemsList[i].Id,
-                                    _appointmentId = appointments[0].ID 
-                                };
+                            SalesOrderItem_Appointment dentry = new SalesOrderItem_Appointment
+                            {
+                                _salesOrderItemId = SalesOrderItemsList[i].Id,
+                                _appointmentId = appointments[0].ID
+                            };
                             salesOrderItem_Appointments.Add(dentry);
                             dentry = null;
                         }
-                        
+
                     }
                     foreach (var entry in salesOrderItem_Appointments)
                     {
@@ -671,7 +683,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
         public string HoldOrder(OrderInDto TmpOrder)
         {
             string json = JObject.FromObject(TmpOrder).ToString();
-            Helpers.File.TempFile tmp =  Helpers.File.TempFileManager.Create();
+            Helpers.File.TempFile tmp = Helpers.File.TempFileManager.Create();
             tmp.WriteAllText(json);
             return tmp.GetFileName();
         }
@@ -686,9 +698,10 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
             try
             {
                 return Helpers.File.TempFileManager.GetFileContent(id);
-            }catch(FileNotFoundException e)
+            }
+            catch (FileNotFoundException e)
             {
-                throw new FileNotExistException("The Id is invalid" , HttpStatusCode.BadRequest);
+                throw new FileNotExistException("The Id is invalid", HttpStatusCode.BadRequest);
             }
         }
 
@@ -700,13 +713,13 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
             {
                 CleanOrder(id);
             }
-            else 
+            else
             {
                 CancelOrder(id);
             }
         }
 
-        public void updateOrder(string username , UpdateOrderDto dto)
+        public void updateOrder(string username, UpdateOrderDto dto)
         {
             SalesOrder order = repository.GetById(dto.OrderId);
             List<SalesOrderItem> items = order.Items;
@@ -719,7 +732,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                 List<string> appointmentID = new List<string>(2);
                 foreach (var item in items)
                 {
-                    foreach(var appointment in item.SaleOrderItem_Appointment)
+                    foreach (var appointment in item.SaleOrderItem_Appointment)
                     {
                         if (appointmentID.Contains(appointment.Appointment.ID))
                         {
@@ -731,7 +744,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
 
                 foreach (var appointment in appointmentID)
                 {
-                    
+
                     var app = _AppointmentTable.GetById(appointment);
                     _SessionTable.GetBySQL(
                         Helpers.Sql.QueryStringBuilder.GetSqlStatement<Session>(
@@ -765,7 +778,7 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
                     }
                 }
             }
-           
+
 
             // update customer infor
             if (dto.CustomerId is not null)
@@ -795,5 +808,5 @@ namespace TheBetterLimited_Server.AppLogic.Controllers
         }
     }
 
-    
+
 }

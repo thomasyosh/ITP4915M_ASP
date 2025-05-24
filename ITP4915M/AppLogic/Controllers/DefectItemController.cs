@@ -104,9 +104,9 @@ namespace ITP4915M.AppLogic.Controllers
         }
 
 
-        public List<Hashtable> GetAll(string username , string lang)
+        public List<Dictionary<object, object>> GetAll(string username , string lang)
         {
-            List<Hashtable> res = new List<Hashtable>();
+            List<Dictionary<object, object>> res = new List<Dictionary<object, object>>();
             List<Data.Entity.DefectItemRecord> records = repository.GetAll();
 
             foreach (var record in records)
