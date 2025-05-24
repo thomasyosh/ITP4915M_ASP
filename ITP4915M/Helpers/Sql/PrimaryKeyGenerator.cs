@@ -2,6 +2,7 @@ using ITP4915M.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using ITP4915M.Helpers.Extension;
+using ITP4915M.Helpers.LogHelper;
 
 namespace ITP4915M.Helpers.Sql
 {
@@ -64,7 +65,7 @@ namespace ITP4915M.Helpers.Sql
 #if DEBUG
             ConsoleLogger.Debug(sequence);
 #endif
-            int NewIdValue = sequence.ToInt32() + 1;
+            int NewIdValue = Convert.ToInt32(sequence) + 1;
             // append the "0" to the front of the id, so that the length will some as the length of the id
             sb.Append(NewIdValue.ToString().PadLeft(Id.Length - _prefix.Length, '0'));
             ConsoleLogger.Debug(sb.ToString());

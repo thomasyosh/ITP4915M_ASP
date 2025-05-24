@@ -1,6 +1,7 @@
 using ITP4915M.Data;
 using ITP4915M.Data.Entity;
 using ITP4915M.Data.Repositories;
+using ITP4915.MHelpers.Entity;
 
 namespace ITP4915M.AppLogic.Controllers
 
@@ -37,7 +38,7 @@ namespace ITP4915M.AppLogic.Controllers
             var newSupplier = await supplierRepository.AddAsync(supplier);
         }
 
-        public async Task ModifySupplier(string id , List<Models.UpdateObjectModel> content)
+        public async Task ModifySupplier(string id, List<Models.UpdateObjectModel> content)
         {
             var potentialSupplier = await supplierRepository.GetByIdAsync(id);
             if (potentialSupplier is null)
@@ -45,7 +46,7 @@ namespace ITP4915M.AppLogic.Controllers
                 throw new BadArgException("The supplier not found.");
             }
 
-            ITP4915M.Helpers.Entity.EntityUpdater.Update<Supplier>(ref potentialSupplier , content);
+            ITP4915M.Helpers.Entity.EntityUpdater.Update<Supplier>(ref potentialSupplier, content);
             await supplierRepository.UpdateAsync(potentialSupplier);
             await db.SaveChangesAsync();
         }

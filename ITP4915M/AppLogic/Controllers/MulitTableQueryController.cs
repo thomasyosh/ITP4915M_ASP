@@ -1,5 +1,6 @@
 using ITP4915M.Data;
 using ITP4915M.Helpers.Extension;
+using ITP4915M.AppLogic.Exceptions;
 namespace ITP4915M.AppLogic.Controllers
 {
     public class MulitTableQueryController

@@ -1,7 +1,8 @@
 using ITP4915M.Data;
 using ITP4915M.Data.Dto;
 using System.Text;
-using ITP4915M.Helpers.LogHelper
+using ITP4915M.Helpers.LogHelper;
+using ITP4915M.AppLogic.Exceptions;
 
 namespace ITP4915M.AppLogic.Controllers;
 
@@ -26,11 +27,11 @@ public class MessageController
         userInfo = new Data.Repositories.UserInfoRepository(dataContext);
     }
 
-    public Models.ReceiveMessageModel GetMessage(string username , uint limit = 0 )
+    public Models.ReceiveMessageModel GetMessage(string username, uint limit = 0)
     {
-        
+
         var account = _accountTable.GetBySQL(
-            Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Account>($"UserName:{username}" )
+            Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Account>($"UserName:{username}")
         ).FirstOrDefault();
 
         if (account is null)
@@ -39,13 +40,13 @@ public class MessageController
         }
 
         var messages = _receiveMessageTable.GetBySQL(
-            Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Staff_Message>($"_receiverId:{account.Id}" )
-        ).OrderByDescending( m => m.message.SentDate ).ToList();
+            Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Staff_Message>($"_receiverId:{account.Id}")
+        ).OrderByDescending(m => m.message.SentDate).ToList();
 
         // do not show error message if the limit is not valid
         if (limit != 0 && limit < messages.Count)
         {
-            messages = messages.GetRange(0 , (int)limit);
+            messages = messages.GetRange(0, (int)limit);
         }
 
         List<ReceiveMessageDto> messageList = new List<ReceiveMessageDto>();
@@ -78,7 +79,7 @@ public class MessageController
 
     public Models.ReceiveMessageModel GetUnReadMessage(string username)
     {
-        
+
         var account = _accountTable.GetBySQL(
             Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Account>($"UserName:{username}")
         ).FirstOrDefault();
@@ -89,13 +90,13 @@ public class MessageController
         }
 
         var messages = _receiveMessageTable.GetBySQL(
-            Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Staff_Message>($"_receiverId:{account.Id}" )
+            Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Staff_Message>($"_receiverId:{account.Id}")
         );
 
         List<ReceiveMessageDto> messageList = new List<ReceiveMessageDto>();
         foreach (var message in messages)
         {
-           if (message.Status == Data.Entity.StaffMessageStatus.Received)
+            if (message.Status == Data.Entity.StaffMessageStatus.Received)
             {
                 messageList.Add(new ReceiveMessageDto
                 {
@@ -125,9 +126,9 @@ public class MessageController
         return messageModel;
     }
 
-     public Models.ReceiveMessageModel GetUnreceivedMessage(string username)
+    public Models.ReceiveMessageModel GetUnreceivedMessage(string username)
     {
-        
+
         var account = _accountTable.GetBySQL(
             Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Account>($"UserName:{username}")
         ).FirstOrDefault();
@@ -138,13 +139,13 @@ public class MessageController
         }
 
         var messages = _receiveMessageTable.GetBySQL(
-            Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Staff_Message>($"_receiverId:{account.Id}" )
+            Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Staff_Message>($"_receiverId:{account.Id}")
         );
 
         List<ReceiveMessageDto> messageList = new List<ReceiveMessageDto>();
         foreach (var message in messages)
         {
-           if (message.Status == Data.Entity.StaffMessageStatus.Unreceived)
+            if (message.Status == Data.Entity.StaffMessageStatus.Unreceived)
             {
                 message.Status = Data.Entity.StaffMessageStatus.Received;
                 _receiveMessageTable.Update(message);
@@ -178,7 +179,7 @@ public class MessageController
         return messageModel;
     }
 
-    public void BoardcastMessageToPosition(string username , string positionId , string title , string content)
+    public void BoardcastMessageToPosition(string username, string positionId, string title, string content)
     {
         // get all the user
         var staffs = _staffTable.GetBySQL(
@@ -186,12 +187,13 @@ public class MessageController
         );
         if (staffs.Count == 0) return;
         var accountIds = new List<string>();
-        foreach(var staff in staffs)
+        foreach (var staff in staffs)
         {
-            try 
+            try
             {
                 accountIds.Add(staff.acc.UserName);
-            }catch(NullReferenceException e) // some staff has no account
+            }
+            catch (NullReferenceException e) // some staff has no account
             {
             }
         }
@@ -201,9 +203,9 @@ public class MessageController
             Title = title,
             content = content + "\r\n\r\n\t(Generated by system)"
         };
-        this.SendMessage(username , SendMessageDto); 
+        this.SendMessage(username, SendMessageDto);
     }
-    
+
     public void setMessageRead(string id)
     {
         var message = _receiveMessageTable.GetBySQL(
@@ -227,10 +229,10 @@ public class MessageController
         }
     }
 
-    public void SendMessage(string SenderUserName , Data.Dto.SendMessageDto message)
+    public void SendMessage(string SenderUserName, Data.Dto.SendMessageDto message)
     {
         var account = _accountTable.GetBySQL(
-            Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Account>($"UserName:{SenderUserName}" )
+            Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Account>($"UserName:{SenderUserName}")
         ).FirstOrDefault();
 
         if (account is null)
@@ -245,7 +247,7 @@ public class MessageController
             SentDate = DateTime.Now,
             _senderId = account.Id,
             sender = account,
-            Id = Helpers.Sql.PrimaryKeyGenerator.Get<Data.Entity.Message>(_db) 
+            Id = Helpers.Sql.PrimaryKeyGenerator.Get<Data.Entity.Message>(_db)
         };
 
         _sendMessageTable.Add(newMessage);
@@ -259,7 +261,7 @@ public class MessageController
         foreach (var recevier in message.receiver)
         {
             var acc = _accountTable.GetBySQL(
-                Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Account>($"UserName:{recevier}" )
+                Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Account>($"UserName:{recevier}")
             ).FirstOrDefault();
 
             ConsoleLogger.Debug(Helpers.Sql.QueryStringBuilder.GetSqlStatement<Data.Entity.Account>($"UserName:{recevier}"));
@@ -284,7 +286,7 @@ public class MessageController
                 failedUsername.Append(recevier + ", ");
             }
         }
-        #if DEBUG
+#if DEBUG
             var receiverMessage_Admin = new Data.Entity.Staff_Message
             {
                 _receiverId =  "A0001",
@@ -299,7 +301,7 @@ public class MessageController
             {
                 // ignoreP
             }
-        #endif 
+#endif
 
         if (isFailed)
         {
@@ -310,15 +312,16 @@ public class MessageController
         {
             _db.SaveChanges();
 
-        }catch(Exception e)
+        }
+        catch (Exception e)
         {
             throw new OperationFailException("Send message failed.");
         }
-        
+
     }
 
 
-    public void BoardcastMessage(string username , string departmentId, string title , string content)
+    public void BoardcastMessage(string username, string departmentId, string title, string content)
     {
         // get all the user
         var staffs = _staffTable.GetBySQL(
@@ -326,12 +329,13 @@ public class MessageController
         );
         if (staffs.Count == 0) return;
         var accountIds = new List<string>();
-        foreach(var staff in staffs)
+        foreach (var staff in staffs)
         {
-            try 
+            try
             {
                 accountIds.Add(staff.acc.UserName);
-            }catch(NullReferenceException e) // some staff has no account
+            }
+            catch (NullReferenceException e) // some staff has no account
             {
             }
         }
@@ -341,7 +345,7 @@ public class MessageController
             Title = title,
             content = content + "\r\n\r\n\t(Generated by system)"
         };
-        this.SendMessage(username , SendMessageDto);
+        this.SendMessage(username, SendMessageDto);
     }
 
     public bool CheckUserExist(string username)
@@ -359,5 +363,5 @@ public class MessageController
 
     }
 
-    
+
 }

@@ -1,6 +1,7 @@
 using ITP4915M.AppLogic.Models;
 using System.Collections.Generic;
 using ITP4915M.Data;
+using ITP4915.MHelpers.Entity;
 
 namespace ITP4915M.AppLogic.Controllers
 {
