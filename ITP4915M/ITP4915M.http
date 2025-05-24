@@ -1,0 +1,6 @@
+@ITP4915M_HostAddress = http://localhost:5197
+
+GET {{ITP4915M_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

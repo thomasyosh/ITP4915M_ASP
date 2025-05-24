@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+    volumes:
+    - ./postgres-data:/var/lib/postgresql/data
+  mysql:
+    container_name: flask_mysql
+    restart: unless-stopped
+    image: mysql
+    environment:
+      MYSQL_DATABASE: "test"
+      MYSQL_USER: "test"
+      MYSQL_PASSWORD: "test"
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - ./my-datavolume:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/setup.sql
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    restart: unless-stopped
+    ports:
+      - 7777:8080
+  
+  app:
+    build:
+      context: ./student-record-management
+      dockerfile: ./Dockerfile.multi
+    restart: unless-stopped
+    ports:
+    - 5000:8080
+  
+  app2:
+    build:
+      context: ./ITP4915M
+      dockerfile: ./Dockerfile.multi
+    restart: unless-stopped
+    ports:
+    - 5001:8080
