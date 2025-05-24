@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
 using System.Collections;
+using ITP4915M.Helpers.LogHelper;
 
 
 namespace ITP4915M.Helpers.File

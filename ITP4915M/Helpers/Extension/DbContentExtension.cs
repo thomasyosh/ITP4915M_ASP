@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ITP4915M.Helpers.LogHelper;
 
 namespace ITP4915M.Helpers.Extension
 {

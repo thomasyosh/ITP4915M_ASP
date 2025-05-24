@@ -1,7 +1,8 @@
-﻿namespace ITP4915M.Helpers;
-using ITP4915M.Helpers.LogHelper;
-
+﻿using ITP4915M.Helpers.LogHelper;
+using System.Text;
 using System.Collections;
+
+namespace ITP4915M.Helpers;
 public static class HttpReader
 {
     public static string GetClientSocket(HttpContext context)
@@ -34,9 +35,9 @@ public static class HttpReader
         var s = new Dictionary<object, object>();
         foreach (var c in claims)
         {
-            s.Add(c.Type.Split('/')[c.Type.Split('/').Length - 1] , c.Value);
+            s.Add(c.Type.Split('/')[c.Type.Split('/').Length - 1], c.Value);
         }
-        
+
         return s;
     }
 }

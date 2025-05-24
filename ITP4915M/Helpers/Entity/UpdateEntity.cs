@@ -1,7 +1,7 @@
 using ITP4915M.AppLogic.Models;
 using ITP4915M.AppLogic.Exceptions;
 
-namespace ITP4915.MHelpers.Entity
+namespace ITP4915M.Helpers.Entity
 {
     public static class EntityUpdater
     {

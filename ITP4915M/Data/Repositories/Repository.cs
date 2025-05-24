@@ -1,7 +1,7 @@
 using MySqlConnector;
 using ITP4915M.AppLogic.Exceptions;
 using Microsoft.EntityFrameworkCore;
-using ITP4915.MHelpers.Entity;
+using ITP4915M.Helpers.Entity;
 
 namespace ITP4915M.Data.Repositories;
 

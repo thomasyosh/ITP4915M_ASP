@@ -1,7 +1,7 @@
 using ITP4915M.Data;
 using ITP4915M.Data.Entity;
 using ITP4915M.Data.Repositories;
-using ITP4915.MHelpers.Entity;
+using ITP4915M.Helpers.Entity;
 
 namespace ITP4915M.AppLogic.Controllers
 

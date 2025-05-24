@@ -5,6 +5,7 @@ using ITP4915M.AppLogic.Models;
 using ITP4915M.Helpers.LogHelper;
 using ITP4915M.Data.Dto;
 using System.Net;
+using ITP4915M.AppLogic.Exceptions;
 
 namespace ITP4915M.AppLogic.Controllers;
 
