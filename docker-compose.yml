@@ -16,6 +16,8 @@ services:
       MYSQL_PASSWORD: "test"
       MYSQL_ROOT_PASSWORD: "root"
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3306:3306"
     volumes:
       - ./my-datavolume:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/setup.sql
@@ -24,16 +26,7 @@ services:
     container_name: adminer
     restart: unless-stopped
     ports:
-      - 7777:8080
-  
-  app:
-    build:
-      context: ./student-record-management
-      dockerfile: ./Dockerfile.multi
-    restart: unless-stopped
-    ports:
-    - 5000:8080
-  
+      - 7777:8080  
   app2:
     build:
       context: ./ITP4915M
