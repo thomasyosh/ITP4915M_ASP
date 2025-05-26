@@ -1,24 +1,23 @@
-using Microsoft.EntityFrameworkCore;
-using ITP4915M.Data;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.IdentityModel.Tokens;
+    using System.Text;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using MySqlConnector;
 
-
-public class Program {
+    public class Program {
     private static void Main (string [] args) {
         var builder = WebApplication.CreateBuilder(args);
         // Add services to the container.
 
         builder.Services.AddControllers();
-        builder.Services.AddDbContext<DataContext>(options =>
-        {
-            var ConnString = Environment.GetEnvironmentVariable("ConnectionString");
-            options.UseMySql(
-                ConnString,
-                ServerVersion.AutoDetect(ConnString)
-            );
-        });
+        // builder.Services.AddDbContext<DataContext>(options =>
+        // {
+        //     var ConnString = Environment.GetEnvironmentVariable("ConnectionString");
+        //     options.UseMySql(
+        //         ConnString,
+        //         ServerVersion.AutoDetect(ConnString)
+        //     );
+        // });
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>

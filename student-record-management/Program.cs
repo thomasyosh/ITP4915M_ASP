@@ -1,5 +1,5 @@
-using myWebApp.Data;
-using myWebApp.Helpers.LogHelper;
+using ITP4915M.Data;
+using ITP4915M.Helpers.LogHelper;
 using Microsoft.AspNetCore.Authentication;
 
 public class Program
@@ -28,7 +28,7 @@ public class Program
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                        .GetBytes(_Secret["Token"])),
+                        .GetBytes("hihi")),
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
