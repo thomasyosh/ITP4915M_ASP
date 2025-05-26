@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ITP4915M.Data.Entity
 {
 
-   [Table("Appointment")]
+   [Table("appointment")]
     public class Appointment
     {
         [Key]
