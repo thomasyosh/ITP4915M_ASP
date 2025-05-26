@@ -40,4 +40,4 @@ services:
       dockerfile: ./Dockerfile.multi
     restart: unless-stopped
     ports:
-    - 5001:8080
+    - 5001:80

@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace ITP4915M.Data.Dto
 {
     public class DefectItemDto
