@@ -73,11 +73,8 @@
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
             app.UseSwagger();
             app.UseSwaggerUI();
-        }
 
         app.UseAuthentication();
         app.UseAuthorization();
@@ -110,7 +107,7 @@
 
         ConsoleLogger.Debug("Version");
 
-        app.Run("");
+        app.Run();
 
         TempFileManager.CloseAllTempFile();
         ITP4915M.Helpers.File.PDFFactory.Instance.Dispose();
