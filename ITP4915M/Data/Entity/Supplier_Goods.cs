@@ -8,8 +8,10 @@ namespace ITP4915M.Data.Entity
     {
         public string ID { get; set; }
         public string _supplierId { get; set;}
+        [ForeignKey("_supplierId")]
         public virtual Supplier Supplier { get; set; }
         public string _goodsId { get; set;}
+        [ForeignKey("_goodsId")]
         public virtual Goods Goods { get; set; }
         public double? Price { get; set; }
         public virtual ICollection<Supplier_Goods_Stock> Supplier_Goods_Stocks { get; set; }

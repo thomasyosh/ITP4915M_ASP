@@ -9,6 +9,7 @@ namespace ITP4915M.Data.Entity
     {
         public string Id { get; set;}
         public string _catalogueId { get; set; }
+        [ForeignKey("_catalogueId")]
         public virtual Catalogue Catalogue { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

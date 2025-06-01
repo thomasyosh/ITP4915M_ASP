@@ -8,8 +8,10 @@ namespace ITP4915M.Data.Entity
     {
         public string Id  { get; set; }
         public string _locationId { get; set; }
+        [ForeignKey("_locationId")]
         public virtual Location Location { get; set; }
         public string _supplierGoodsId { get; set;}
+        [ForeignKey("_supplierGoodsId")]
         public virtual Supplier_Goods Supplier_Goods { get; set; }
         public int Quantity { get; set; }
         public int MaxLimit { get; set; }

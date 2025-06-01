@@ -9,6 +9,7 @@ namespace ITP4915M.Data.Entity
     {
         public string ID { get; set;}
         public string _locationID { get; set; }
+        [ForeignKey("_locationID")]
         public virtual Location Location { get; set; }
 
     }

@@ -9,10 +9,13 @@ namespace ITP4915M.Data.Entity
     {
         public string ID { get; set;}
         public string _createrId { get; set;}
+        [ForeignKey("_createrId")]
         public virtual Staff Creater { get; set; }
         public string _operatorId { get; set;}
+        [ForeignKey("_operatorId")]
         public virtual Staff Operator { get; set; }
         public string _locationId { get; set; }
+         [ForeignKey("_locationId")]
         public virtual Location Location { get; set; }
         public DateTime CreateTime { get; set; }
         public DateTime OperateTime { get; set; }

@@ -8,6 +8,7 @@ namespace ITP4915M.Data.Entity
     {
         public string ID { get; set;}
         public string _departmentId { get; set;}
+        [ForeignKey("_departmentId")]
         public virtual Department Department { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }

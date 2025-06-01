@@ -9,6 +9,7 @@ namespace ITP4915M.Data.Entity
     {
         public string Id { get; set; }
         public string _senderId { get; set; }
+        [ForeignKey("_senderId")]
         public virtual Account sender { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
