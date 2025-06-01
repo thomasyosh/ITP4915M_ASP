@@ -11,13 +11,16 @@ public static class EmailSender
 
     public static string GetEmailAddress()
     {
-        return $"{_Secret["Username"]}{_Secret["Domain"]}";
+        var username = Environment.GetEnvironmentVariable("Username");
+        var domain = Environment.GetEnvironmentVariable("Domain");
+        return $"{username}{domain}";
+        
     }
 
     public static MimeMessage CreateEmail(string recevier, string receiverAddress, string subject, in string msg)
     {
         var message = new MimeMessage();
-        message.From.Add(new MailboxAddress(_Secret["DisplayedName"], GetEmailAddress()));
+        message.From.Add(new MailboxAddress(Environment.GetEnvironmentVariable("DisplayedName"), GetEmailAddress()));
         message.To.Add(new MailboxAddress(recevier, receiverAddress));
         message.Subject = subject;
         message.Body = new TextPart(TextFormat.Html)
@@ -36,8 +39,8 @@ public static class EmailSender
 
         using (var client = new SmtpClient())
         {
-            await client.ConnectAsync(_Secret["ServerURL"], int.Parse(_Secret["Port"]), false);
-            await client.AuthenticateAsync(GetEmailAddress(), _Secret["Password"]);
+            await client.ConnectAsync(Environment.GetEnvironmentVariable("ServerURL"), int.Parse(Environment.GetEnvironmentVariable("Port")), false);
+            await client.AuthenticateAsync(GetEmailAddress(), Environment.GetEnvironmentVariable("Password"));
 
             if (client.IsConnected)
             {

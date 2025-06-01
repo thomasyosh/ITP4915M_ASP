@@ -20,7 +20,7 @@ public static class JwtToken
         };
 
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Secret.GetValue("Token")));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("Token")));
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
@@ -43,7 +43,7 @@ public static class JwtToken
             ValidateIssuer = false,
             ValidateAudience = false,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Secret.GetValue("Token")))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("Token")))
         };
         var principal = jwtSecurityHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
         return principal;
@@ -60,13 +60,13 @@ public static class JwtToken
             new(ClaimTypes.Role, "resetpassword")
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Secret.GetValue("Token")));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("Token")));
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
         var token = new JwtSecurityToken(
             claims: claims,
-            expires: DateTime.Now.AddMinutes(Int32.Parse(_Secret["reset_password_expire_time"])),
+            expires: DateTime.Now.AddMinutes(Int32.Parse(Environment.GetEnvironmentVariable("Token"))),
             signingCredentials: creds);
 
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);

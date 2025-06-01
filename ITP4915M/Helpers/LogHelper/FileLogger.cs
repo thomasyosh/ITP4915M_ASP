@@ -4,7 +4,7 @@ namespace ITP4915M.Helpers.LogHelper;
 
 public class FileLogger
 {
-    private static readonly string _LogPath = AppDomain.CurrentDomain.BaseDirectory + "/var/log/";
+    private static readonly string _LogPath = AppDomain.CurrentDomain.BaseDirectory;
 
     private static StreamWriter _logWriter = new StreamWriter(new FileStream(_LogPath + DateTime.Today.ToString("d").Replace("/","") + ".log", FileMode.Append, FileAccess.Write));
     private static StreamWriter _accessWriter = new StreamWriter(new FileStream(_LogPath + "Access.log", FileMode.Append, FileAccess.Write));

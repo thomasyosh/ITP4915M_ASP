@@ -4,7 +4,7 @@ namespace ITP4915M.Helpers;
 
 public class SecretConf
 {
-    public static SecretConf _Secret = new("etc/secret.conf");
+    // public static SecretConf _Secret = new("etc/secret.conf");
     private readonly Hashtable table;
 
     public SecretConf(string path)
