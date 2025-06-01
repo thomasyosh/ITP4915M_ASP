@@ -11,6 +11,7 @@ namespace ITP4915M.Data.Entity
         public string _supplierGoodsStockId { get; set; }
         [ForeignKey("_supplierGoodsStockId")]
         public virtual Supplier_Goods_Stock SupplierGoodsStock { get; set; }
+        [NotMapped]
         public int Quantity { get; set; } = 1;
         public string? _salesOrderId { get; set; }
         [ForeignKey("_salesOrderId")]
@@ -21,14 +22,18 @@ namespace ITP4915M.Data.Entity
         public string _operatorId { get; set; }
         [ForeignKey("_operatorId")]
         public virtual Staff Operator { get; set; }
+        [NotMapped]
         public DefectItemRecordStatus Status { get; set; }
         public DateTime createdAt { get; set; }
         public DateTime updatedAt { get; set; }
         public string? Remark { get; set; }
         public DefectItemHandleStatus HandleStatus { get; set; }
-        public string? _customerId { get; set; }
-         [ForeignKey("_customerId")]
-        public virtual Customer? customer { get; set; }
+        [NotMapped]
+        public string _customerId { get; set; }
+        [ForeignKey("_customerId")]
+        [NotMapped]
+        public virtual Customer customer { get; set; }
+        [NotMapped]
         public string CollectAddress { get; set; }
     }
     public enum DefectItemHandleStatus

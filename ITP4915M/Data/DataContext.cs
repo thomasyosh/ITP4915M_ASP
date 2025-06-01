@@ -98,6 +98,9 @@ namespace ITP4915M.Data
             .HasOne(soia => soia.Appointment)
             .WithMany(a => a.SaleOrderItem_Appointments)
             .HasForeignKey(soia => soia._appointmentId);
+
+        md.Entity<SalesOrderItem_Appointment>()
+            .ToTable("salesorderitem_appointment");
         
         md.Entity<Team>()   
             .HasOne(t => t.Department)

@@ -9,7 +9,7 @@ namespace ITP4915M.Data.Entity
     {
         public string ID { get; set; }
         public string _creatorId { get; set; }
-        [ForeignKey("_createrId")]
+        [ForeignKey("_creatorId")]
         public virtual Staff User { get; set; }
         public string _operatorId { get; set; }
         [ForeignKey("_operatorId")]
